@@ -1,0 +1,50 @@
+version: '2'
+services:
+  db:
+    image: codefornl/carto-postgis
+    restart: always
+    expose:
+      - 5432
+  map-api:
+    image: codefornl/carto-map-api
+    links:
+      - db:db
+      - redis:redis
+    expose:
+      - 8181
+  sql-api:
+    image: codefornl/carto-sql-api
+    links:
+      - db:db
+      - redis:redis
+    expose:
+      - 8080
+  editor:
+    image: codefornl/carto-editor
+    environment:
+      - BUNDLE_CACHE=/box
+    links:
+      - sql-api:sql-api
+      - maps-api:maps-api
+      - db:db
+      - redis:redis
+    volumes_from:
+      - box
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+  redis:
+    image: redis
+    expose:
+      - 6379
+  box:
+    image: busybox
+    volumes:
+      - /box
+  #varnish:
+  #  image: varnish
+  #  ports:
+  #    - 80:3001
+  #  links:
+  #    - web:node1
