@@ -1,0 +1,16 @@
+[submodule "carto-sql-api-docker"]
+	path = carto-sql-api-docker
+	url = https://github.com/codefornl/carto-sql-api-docker.git
+[submodule "carto-editor-docker"]
+	path = carto-editor-docker
+	url = https://github.com/codefornl/carto-editor-docker.git
+[submodule "carto-maps-api-docker"]
+	path = carto-maps-api-docker
+	url = https://github.com/codefornl/carto-maps-api-docker.git
+[submodule "carto-postgis-docker"]
+	path = carto-postgis-docker
+	url = https://github.com/codefornl/carto-postgis-docker.git
+
+[submodule "carto-nginx-docker"]
+	path = carto-nginx-docker
+	url = https://github.com/codefornl/carto-nginx-docker.git

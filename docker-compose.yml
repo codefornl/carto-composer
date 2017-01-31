@@ -1,28 +1,56 @@
 version: '2'
 services:
+  nginx:
+    #image: codefornl/<TODO> image has not been set
+    build: carto-nginx-docker
+    ports:
+      - 80:80
+    links:
+      - editor:editor
+      - sql-api:sql-api
+      - maps-api:maps-api
   db:
+    #build: carto-postgis-docker
     image: codefornl/carto-postgis
     restart: always
     expose:
       - 5432
-  map-api:
-    image: codefornl/carto-map-api
+    ports:
+      - 5432:5432
+  redis:
+    image: redis
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+  box:
+    image: busybox
+    volumes:
+      # Warning! Make sure you have a directory bundle_cache relative to docker-compose.yml
+      - ./bundle_cache:/bundle_cache
+      # Warning! Make sure you have a directory assets relative to docker-compose.yml
+      - ./assets:/carto/public/assets
+  maps-api:
+    build: carto-maps-api-docker
+    #image: codefornl/carto-maps-api-docker
     links:
       - db:db
       - redis:redis
     expose:
       - 8181
   sql-api:
-    image: codefornl/carto-sql-api
+    build: carto-sql-api-docker
+    #image: codefornl/carto-sql-api
     links:
       - db:db
       - redis:redis
     expose:
       - 8080
   editor:
-    image: codefornl/carto-editor
+    build: carto-editor-docker
+    #image: codefornl/carto-editor-docker
     environment:
-      - BUNDLE_CACHE=/box
+      - BUNDLE_PATH=/bundle_cache
     links:
       - sql-api:sql-api
       - maps-api:maps-api
@@ -34,17 +62,3 @@ services:
       - 3000
     ports:
       - 3000:3000
-  redis:
-    image: redis
-    expose:
-      - 6379
-  box:
-    image: busybox
-    volumes:
-      - /box
-  #varnish:
-  #  image: varnish
-  #  ports:
-  #    - 80:3001
-  #  links:
-  #    - web:node1
